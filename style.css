@@ -1,13 +1,13 @@
 #lyrics_text{
-    font-size: 2.5em;
+    font-size: 2.3em;
 }
 
 #kana_lyrics_text,#kana_lyrics_text_typed{
-    font-size: 2.2em;
+    font-size: 2em;
 }
 
 #roma_typed,#roma_untyped{
-    font-size: 1.8em;
+    font-size: 1.5em;
 }
 #roma,#kana,#next_lyrics_text{
     display: flex;
@@ -18,7 +18,7 @@
 
 #content{
     width: 100%;
-    height: 50%;
+    height: 45%;
     position: absolute;
     background-color: rgba(63, 63, 63, 0.447);
     overflow :hidden;
