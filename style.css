@@ -18,7 +18,8 @@
 
 #content{
     width: 100%;
-    height: 48%;
+    min-height: 48%;
+    height: auto;
     position: absolute;
     background-color: rgba(63, 63, 63, 0.447);
     overflow :hidden;
@@ -71,3 +72,4 @@ body{
 body::-webkit-scrollbar{
     display:none;
   }
+
