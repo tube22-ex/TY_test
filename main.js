@@ -3,18 +3,7 @@ tag.src = "https://www.youtube.com/iframe_api";
 let firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-
-let firebaseConfig = {
-    apiKey: "AIzaSyDT9B8tcW9ioUvh4gLmwxtqu7XhyPyv4gg",
-    databaseURL: "https://typingube-default-rtdb.firebaseio.com/",
-};
-  
-// Firebase初期化
-const app02 = firebase.initializeApp(firebaseConfig,"app02");
-const app02DB = app02.database();  
-
-
-/*ここまでDB初期化*/
+let data;
 let player;
 let index = 0;
 let time_int = [];//timetag
@@ -31,6 +20,7 @@ let roma_typed = document.getElementById('roma_typed')
 let roma_untyped = document.getElementById('roma_untyped')
 let key = document.getElementById('key')
 let progressBar = document.getElementById('progressBar')
+let content = document.getElementById('content')
 let currentTime = 0
 let f = true
 let word
@@ -47,6 +37,7 @@ function video_set(YT_URL){
     lyrics_s = [];//加工済み歌詞
     index_pre = 0
     index_next = 0
+    currentTime = 0
     word = null;
     console.log("りせっっっっっっと")
     f = false
@@ -153,44 +144,30 @@ function kana_lyrics(kana_lrc){
 
 
 
+/*ここからスプレッドシート読み取り*/
 
-/*ここからDB読み取り*/
-
-
-app02DB.ref().once("value")
-  .then(function(snapshot) {
-    // 取得したデータを処理する
-    var data = snapshot.val();
+const request = new XMLHttpRequest();
+request.open('GET', 'https://script.google.com/macros/s/AKfycbxwQw9qTJnleu2OXcwsnMo87J1pfASOTQx09veVnZJNqCXqa4Av12QzyXnd5lg_qiwpag/exec');
+  request.responseType = 'json';
+  request.onload = function () {
+    data = this.response;
     add_lrc_selection(data)
-  })
+
+ };
+request.send();
 
 
-
-  function img_clickEvent(e){
-    let f_URL = e.target.getAttribute("name")
-
-    app02DB.ref().child(f_URL).once('value')
-.then(snapshot => {
-if (snapshot.exists()) {
-  // パスが存在する場合の処理
-  DBdata = snapshot.val();
-  lrc_set(DBdata)
-} else {
-  // パスが存在しない場合の処理
-  alert(`DB内に${f_URL}のデータがありません。`);
-  return
+function img_clickEvent(e){
+    let f_id = e.target.getAttribute("name")
+    lrc_set(f_id)
 }
-})
-
-
-}
-
 
 
 function add_lrc_selection(data){
+
     for(d in data){
-        let url = data[d]["YT_URL"];
-        let f_id = data[d]["f_id"]
+        let url = data[d]["URL"];
+        let f_id = d
         let thumbnail = `<img 
 class="thumbnail"src="http://img.youtube.com/vi/${url}/mqdefault.jpg" name="${f_id}">`
         document.getElementById('lrc_select').insertAdjacentHTML("beforeend",thumbnail);
@@ -202,10 +179,10 @@ class="thumbnail"src="http://img.youtube.com/vi/${url}/mqdefault.jpg" name="${f_
 }
 
 
-function lrc_set(DBdata){
-    video_set(DBdata["YT_URL"])
-    lyrics(DBdata["lrc_data"])
-    kana_lyrics(DBdata["lrc_kana_data"])
+function lrc_set(id){
+    video_set(data[id]["URL"])
+    lyrics(data[id]["KASHI"])
+    kana_lyrics(data[id]["YOMI"])
 }
 
 
@@ -276,6 +253,8 @@ function progress(){
 
 
 function hig(canji,kana){
+
+    console.log(currentTime)
 word = new Word(canji, kana);
 roma_typed.textContent = '';
 kana_lyrics_text_typed.textContent = '';
@@ -306,7 +285,6 @@ set(isFinish)
 })
 
 }
-
 
 function set(isFinish){
     if(isFinish == true){
