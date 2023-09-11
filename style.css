@@ -15,15 +15,22 @@
     white-space:nowrap;
 }
 
-
+#roma,#kana{
+    white-space: pre;
+}
+#content_parent{
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+}
 #content{
-    width: 100%;
-    min-height: 48%;
+    width: 85vw;
+    min-height: 48vh;
     height: auto;
     position: absolute;
-    background-color: rgba(63, 63, 63, 0.447);
     overflow :hidden;
 }
+
 
 #player{
     border: 1px solid black;
@@ -32,27 +39,62 @@
 
 #playerdiv{
     display: flex;
-    justify-content: center;
-    align-items: center;
     width:100%;
+    bottom:0;
+    position: absolute;
+    left:7vw
 }
 
+body { min-height: 100vh; }
+
 body{
-    background-color: rgb(142, 134, 134);
+    
+    background: linear-gradient(to right, #755062, #624A64, #4F405D, #4A4062, #403F61, #2C3256, #1E2949, #182746, #152242, #0D0E22);
     font-family: 'Noto Serif JP', serif;
+    text-shadow:1px 1px 0 #000,-1px 1px 0 #000,1px -1px 0 #000,-1px -1px 0 #000;
+    font-weight:bold;
 }
+
 
 #progressBar{
     width: 100%;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    height: 5px;
 }
+#progressBar::-webkit-progress-value {
+    background-color: #0fa8b5; /* プログレスバーの色 */
+}
+
+#TimeprogressBar{
+    position: absolute;
+    top: 46vh;
+    width: 100%;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    height: 5px;
+}
+#TimeprogressBar::-webkit-progress-value {
+    background-color: #ffa749; /* プログレスバーの色 */
+}
+
 #next_lyrics_text{
     font-size: 1.8em;
     color: bisque;
 	position: absolute;
-	bottom: 0;
+	bottom: 1vh;
+    width: 60vw;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 #time{
-    font-size:1.3em
+    font-size:1.3em;
+    position: absolute;
+    right: 0vw;
+    top: 40vh;
 }
 
 #lrc_select{
@@ -73,3 +115,31 @@ body::-webkit-scrollbar{
     display:none;
   }
 
+
+#playVolume{
+    position: absolute;
+    top:0vh;
+    right: 10vw;
+}
+
+#status{
+    height: 50vh;
+    width: 30vw;
+    position: absolute;
+    right: 20vw;
+    top:50vh;
+    font-size:2em;
+    border:solid 2px rgb(113, 113, 113);
+    border-radius : 10px;
+}
+#status > span{
+    position: relative;
+    left: 1vw;
+}
+
+#play_speed{
+    position: absolute;
+    right: 8vw;
+    top:50vh;
+    font-size:2em;
+}
