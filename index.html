@@ -8,34 +8,46 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="reset.css">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/higgsino/dist/main.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-database.js"></script>
+    <script src="keygraph.js"></script>
+    <script src="sound.js"></script>
     <title>Document</title>
 </head>
 <body>
+    <input id="playVolume" type="range" value="10">
+    <div id="play_speed">1倍速</div>
+    <div id="content_parent">
+        <div id="content">
+            <div id="time"></div>
+            <progress id="progressBar"></progress>
+            <div id="kana">
+                <div id="kana_lyrics_text_typed"></div>
+                <div id="kana_lyrics_text"></div>
+            </div>
+            <div id="roma">
+                <div id="roma_typed"></div>
+                <div id="roma_untyped"></div>
+            </div>
+            <div id="lyrics_text"></div>
+            <wbr>
+            <div id="next_lyrics_text"></div>
+            <progress id="TimeprogressBar"></progress>
+        </div>
+    </div>
     <div id="playerdiv">
         <div id="player"></div>
-        </div>
-    <div id="content">
-    <div id="time"></div>
-    <progress id="progressBar"></progress>
-    <div id="kana">
-    <div id="kana_lyrics_text_typed"></div>
-    <div id="kana_lyrics_text"></div>
     </div>
-    <div id="roma">
-    <div id="roma_typed"></div>
-    <div id="roma_untyped"></div>
-    </div>
-    <div id="lyrics_text"></div>
-    <wbr>
-    <div id="next_lyrics_text"></div>
+    <div id="status">
+        <span>スコア : </span><span id="score_div">0</span><br>
+        <span>最高 : </span><span id="possible_div">0</span><br>
+        <span>ミス : </span><span id="miss_div">0</span><br>
+        <span>タイプ数 : </span><span id="type_div">0</span><br>
+        <span>クリアライン : </span><span id="line_div">0 / 0</span><br>
+        <span>残りライン : </span><span id="nocori_line_div">0</span><br>
     </div>
     <div id="lrc_select">
     </div>
-    <audio id="key" src="//drive.google.com/uc?id=1UEp6IM0L8HCjf3O1xrYYNvZTHdVFsz3i"></audio>
+    <audio id="clear" src="//drive.google.com/uc?id=1UEp6IM0L8HCjf3O1xrYYNvZTHdVFsz3i"></audio>
+    <audio id="key" src="//drive.google.com/uc?id=1dTRaoTAnsRw0npQuZDrRjVJV8pnMKNQ7"></audio>
     <script src="main.js"></script>
 </body>
 </html>
