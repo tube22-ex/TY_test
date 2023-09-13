@@ -39,9 +39,9 @@
 
 #playerdiv{
     display: flex;
-    width:100%;
-    bottom:0;
-    position: absolute;
+    width:90vw;
+    top:50vh;
+    position: relative;
     left:7vw
 }
 
@@ -63,6 +63,7 @@ body{
     border: none;
     height: 5px;
 }
+
 #progressBar::-webkit-progress-value {
     background-color: #0fa8b5; /* プログレスバーの色 */
 }
@@ -98,8 +99,8 @@ body{
 }
 
 #lrc_select{
-    position: absolute;
-    top: 50em;
+    position: relative;
+    top: 100vh;
     display: flex;
     flex-wrap: wrap; /* 折返し指定 */
     width: 100%;
@@ -123,23 +124,13 @@ body::-webkit-scrollbar{
 }
 
 #status{
-    height: 50vh;
     width: 30vw;
-    position: absolute;
-    right: 20vw;
-    top:50vh;
     font-size:2em;
     border:solid 2px rgb(113, 113, 113);
     border-radius : 10px;
 }
-#status > span{
+
+#status > span,#status > div{
     position: relative;
     left: 1vw;
-}
-
-#play_speed{
-    position: absolute;
-    right: 8vw;
-    top:50vh;
-    font-size:2em;
 }
