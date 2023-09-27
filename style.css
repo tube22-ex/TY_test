@@ -131,7 +131,7 @@ body::-webkit-scrollbar{
 #playVolume{
     position: absolute;
     top:0vh;
-    right: 10vw;
+    left: 8vw;
 }
 
 #status{
@@ -139,6 +139,7 @@ body::-webkit-scrollbar{
     font-size:2em;
     border:solid 2px rgb(113, 113, 113);
     border-radius : 10px;
+    line-height : 1.4em;
 }
 
 #status > span,#status > div{
