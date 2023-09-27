@@ -615,6 +615,7 @@ const keygraph = {
         { char: "あ", keys: ["a"] },
         { char: "い", keys: ["i", "yi"] },
         { char: "う", keys: ["u", "whu", "wu"] },
+        { char: "ゔ", keys: ["vu"] },
         { char: "え", keys: ["e"] },
         { char: "お", keys: ["o"] },
         { char: "か", keys: ["ka", "ca"] },
