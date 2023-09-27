@@ -5,3 +5,5 @@
 https://github.com/toyohisa2nakada/typing/tree/main
 
 https://qiita.com/toyohisa/items/6fa7b4e9ed5d33b7f295
+
+keygraph.jsで[cco,co],[ce,cce]に対応していなかったので追加しました。
