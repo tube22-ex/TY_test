@@ -556,7 +556,7 @@ const keygraph = {
         { char: "っさ", keys: ["ssa"] },
         { char: "っし", keys: ["ssi", "sshi", "cci"] },
         { char: "っす", keys: ["ssu"] },
-        { char: "っせ", keys: ["sse"] },
+        { char: "っせ", keys: ["sse","cce"] },
         { char: "っそ", keys: ["sso"] },
         { char: "っざ", keys: ["zza"] },
         { char: "っじ", keys: ["jji", "zzi"] },
