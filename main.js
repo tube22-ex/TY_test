@@ -34,6 +34,7 @@ let line_div = document.getElementById('line_div');
 let nocori_line_div = document.getElementById('nocori_line_div');
 let possible_div = document.getElementById('possible_div');
 let play_speed = document.getElementById('play_speed');
+let typing_speed = document.getElementById('typing_speed');
 let currentTime = 0;
 let f = true;
 let is_play = false;
@@ -58,7 +59,10 @@ let is_build_keyevent = false;
 
 let Shortcut_key = {"Escape" : "Escape","F10":"F10"};
 let speedList =  [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+//ショートカット系
 
+let startTime = 0;
+//時間
 function video_set(YT_URL){
     player.cueVideoById(YT_URL)
     is_build_keyevent = false;
@@ -253,6 +257,7 @@ function onYouTubeIframeAPIReady() {
         playerVars: {
             controls: 0, // コントロールバーを非表示にする
             enablejsapi: 1,
+            disablekb: 1,
         },
         events: {
             'onReady': onPlayerReady,
@@ -356,7 +361,9 @@ function progress(){
         miss_div.textContent = miss_count;
         type_div.textContent = type_count;
         //表示系
-
+        if(!is_finish){
+        typing_speed.innerText = `${(Math.round((keygraph.key_done().length / (new Date().getTime() - startTime)*100000))/100).toFixed(2)}打/秒 - ${(Math.round((keygraph.key_done().length / (new Date().getTime() - startTime)*100000) * 60 )/100).toFixed(2)}打/分`
+        }
     }
 }
 
@@ -385,6 +392,7 @@ function hig(canji,kana){//canji消すとバグる
     is_finish = false;
     kana = kana.toLowerCase();
     keygraph.build(kana);
+    startTime = new Date().getTime()
 
     disp();
     //行初期化
@@ -413,6 +421,7 @@ function hig(canji,kana){//canji消すとバグる
                     break;
                 default:
               }
+              //ショートカットキー対応
         }else if(is_play){
             if (keygraph.next(e.key)) {
                 roma_typed.style.color = type_color;
@@ -439,6 +448,7 @@ function hig(canji,kana){//canji消すとバグる
                 }
                 // すべての文字をタイプし終わったとき
                 is_finish = true;
+                typing_speed.innerText = typing_speed.innerText;
             }
 
             while(kana_lyrics_text_typed.textContent.length >= 10){
@@ -448,8 +458,8 @@ function hig(canji,kana){//canji消すとバグる
                 roma_typed.textContent = roma_typed.textContent.substring(1);
             }
             if(roma_untyped.innerText == '' && index_next - currentTime > 5 && e.code=='Space'){
-                    player.seekTo(index_next - 3);
-                    //3秒前に飛ばす
+                player.seekTo(index_next - 3);
+                //3秒前に飛ばす
             }
             if(is_last && e.code=='Space'){
                 player.seekTo(player.getDuration() - 3);
