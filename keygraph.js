@@ -618,7 +618,7 @@ const keygraph = {
         { char: "さ", keys: ["sa"] },
         { char: "し", keys: ["si", "shi", "ci"] },
         { char: "す", keys: ["su"] },
-        { char: "せ", keys: ["se"] },
+        { char: "せ", keys: ["se","ce"] },
         { char: "そ", keys: ["so"] },
         { char: "た", keys: ["ta"] },
         { char: "ち", keys: ["chi", "ti"] },
