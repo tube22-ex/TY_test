@@ -5,103 +5,131 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 sound.init();
 
-let max_score = 200000;
+const max_score = 200000;
+//maxスコア
+
+const lyrics_text = document.getElementById('lyrics_text'),
+     next_lyrics_text = document.getElementById('next_lyrics_text'),
+     kana_lyrics_text_typed = document.getElementById('kana_lyrics_text_typed'),
+     kana_lyrics_text = document.getElementById('kana_lyrics_text'),
+     roma_typed = document.getElementById('roma_typed'),
+     roma_untyped = document.getElementById('roma_untyped'),
+     key = document.getElementById('key'),
+     progressBar = document.getElementById('progressBar'),
+     TimeprogressBar = document.getElementById('TimeprogressBar'),
+     content = document.getElementById('content'),
+     score_div = document.getElementById('score_div'),
+     miss_div = document.getElementById('miss_div'),
+     type_div = document.getElementById('type_div'),
+     line_div = document.getElementById('line_div'),
+     nocori_line_div = document.getElementById('nocori_line_div'),
+     possible_div = document.getElementById('possible_div'),
+     play_speed = document.getElementById('play_speed'),
+     lrc_select = document.getElementById('lrc_select'),
+     typing_speed = document.getElementById('typing_speed'),
+     Result_div = document.getElementById('Result_div');
+//要素系
+
+const clear_color = 'green',
+    type_color = '#2b67ff';
+//色系
+
+const Shortcut_key = {"Escape": "Escape","F4": "F4","F10": "F10"};
+const speedList =  [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+//ショートカット系
 
 let is_finish = false;
+let f = true;
+let is_play = false;
+let is_last = false;
+let is_build_keyevent = false;
+let is_result = false;
+let is_F4 = false;
+//フラグ系
+
 let data;
 let player;
-let index = 0;
+let time_interval;
+//変数宣言
+
 let time_int = [];//timetag
 let display_lyrics = [];//タイムタグだけ除いた歌詞
 let kana_display_lyrics = [];
 let lyrics_s = [];//加工済み歌詞
+//配列系
+
+let index = 0;
 let index_pre = 0;
 let index_next = 0;
-let lyrics_text = document.getElementById('lyrics_text');
-let next_lyrics_text = document.getElementById('next_lyrics_text');
-let kana_lyrics_text_typed = document.getElementById('kana_lyrics_text_typed');
-let kana_lyrics_text = document.getElementById('kana_lyrics_text');
-let roma_typed = document.getElementById('roma_typed');
-let roma_untyped = document.getElementById('roma_untyped');
-let key = document.getElementById('key');
-let progressBar = document.getElementById('progressBar');
-let TimeprogressBar = document.getElementById('TimeprogressBar');
-let content = document.getElementById('content');
-let score_div = document.getElementById('score_div');
-let miss_div = document.getElementById('miss_div');
-let type_div = document.getElementById('type_div');
-let line_div = document.getElementById('line_div');
-let nocori_line_div = document.getElementById('nocori_line_div');
-let possible_div = document.getElementById('possible_div');
-let play_speed = document.getElementById('play_speed');
-let typing_speed = document.getElementById('typing_speed');
 let currentTime = 0;
-let f = true;
-let is_play = false;
-let is_last = false;
-let clear_color = 'green';
-let type_color = '#2b67ff';
-let time_interval;
+let play_id = 0;
+//index系
 
 let score = 0;
 let score_char = 0;
 let kana_length = 0;
 let kana_type_count = 0;
 let line_type_count = 0;
-//スコア
+//スコア系
 let miss_count = 0;
 let type_count = 0;
 let line_count = 0;
 let f10count = 3;
 //カウント系
-let is_build_keyevent = false;
-
-
-let Shortcut_key = {"Escape" : "Escape","F10":"F10"};
-let speedList =  [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
-//ショートカット系
 
 let startTime = 0;
 //時間
-function video_set(YT_URL){
-    player.cueVideoById(YT_URL)
+
+function reset(){
+    // if(is_build_keyevent){
+    //     document.body.removeEventListener("keydown", keyEvent)
+    // }
+    player.seekTo(0);
+    Result_div.style.display = 'none';
     is_build_keyevent = false;
-    score_div.textContent = 0;
     is_finish = false;
+    is_last = false;
+    f = false;
+    is_result = false;
+    score_div.textContent = 0;
+    time.textContent = 0;
+    possible_div.textContent = 0;
+    nocori_line_div.textContent = 0;
+    line_div.textContent = "0 / 0";
+    next_lyrics_text.innerHTML = "";
+    lyrics_text.innerText = '';
+    kana_lyrics_text_typed.innerText = '';
+    kana_lyrics_text.innerText = '';
+    roma_typed.innerText = '';
+    roma_untyped.innerText = '';
+    progressBar.value = 0;
     score = 0;
     score_char = 0;
-    kana_length = 0;
     kana_type_count = 0;
     line_type_count = 0;
     miss_count = 0;
     type_count = 0;
     line_count = 0;
-    time.textContent = 0;
-    kana_length = 0;
     kana_type_count = 0;
     line_type_count = 0;
-    possible_div.textContent = 0;
-    nocori_line_div.textContent = 0;
-    line_div.textContent = "0 / 0"
-    progressBar.value = 0
     index = 0;
+    index_pre = 0;
+    index_next = 0;
+    currentTime = 0;
+    startTime = 0;
+    if(!is_F4){
+    kana_length = 0;
+
     time_int = [];//timetag
     display_lyrics = [];//タイムタグだけ除いた歌詞
     kana_display_lyrics = [];
     lyrics_s = [];//加工済み歌詞
-    index_pre = 0
-    index_next = 0
-    currentTime = 0
-    is_last = false;
-    console.log("りせっっっっっっと")
-    f = false
-    next_lyrics_text.innerHTML = ""
-    lyrics_text.innerText = ''
-    kana_lyrics_text_typed.innerText = ''
-    kana_lyrics_text.innerText = ''
-    roma_typed.innerText = ''
-    roma_untyped.innerText = ''
-    clearInterval(time_interval)
+    };
+    clearInterval(time_interval);
+}
+function video_set(YT_URL){
+    player.cueVideoById(YT_URL);
+    reset();
 }
 
 function lyrics(lrc){
@@ -111,39 +139,38 @@ function lyrics(lrc){
     let is_TY = false
     for (i of lyrics_array){
         if(i == ''){
-            continue
+            continue;
         }
         if(i.startsWith("@Ruby") || i.startsWith("@TimeRatio")){
-            break
+            break;
         }
         i = i.replace(/[\ufeff\r]/g,"");
-        let time_tags = i.match(/\[\d{2}:\d{2}:\d{2}\]/g);
+        const time_tags = i.match(/\[\d{2}:\d{2}:\d{2}\]/g);
         if (time_tags) { // null チェック
             for(let time_tag of time_tags){
-                let time_str = time_tag.slice(1,-1)
-                time_int.push(time_str)
+                time_int.push(time_tag.slice(1,-1));
             }
         }
         let TY_time_tags = i.match(/\[\d{2}:\d{2}\.\d{2}\]/g);
         if (TY_time_tags) { // null チェック
             for(let time_tag of TY_time_tags){
-                let time_str = time_tag.slice(1,-1)
-                let parts = time_str.split(/[:.]/); 
-                let results = parts.map(part => parseFloat(part)); 
-                let time_res = (results[0]*60) + results[1] + (results[2]*0.01)
+                const time_str = time_tag.slice(1,-1);
+                const parts = time_str.split(/[:.]/); 
+                const results = parts.map(part => parseFloat(part)); 
+                const time_res = (results[0]*60) + results[1] + (results[2]*0.01)
                 time_int.push(time_res)
             }
-            is_TY = true
+            is_TY = true;
         }
         let match_text = '';
         if(is_TY){
-            match_text = /\[\d{2}:\d{2}\.\d{2}\]/g
+            match_text = /\[\d{2}:\d{2}\.\d{2}\]/g;
             
         }else{
-            match_text = /\[\d{2}:\d{2}:\d{2}\]/g
+            match_text = /\[\d{2}:\d{2}:\d{2}\]/g;
         }
-        let lyrics_text = i.replace(match_text,"")
-        display_lyrics.push(lyrics_text)
+        let lyrics_text = i.replace(match_text,"");
+        display_lyrics.push(lyrics_text);
         lyrics_text = lyrics_text.replace(/['’‘]/g,"");
         lyrics_text = lyrics_text.replace(/&.*?;/g ,"");
         lyrics_text = lyrics_text.replace(/<rt>.*?<\/rt>/g,"");
@@ -151,17 +178,10 @@ function lyrics(lrc){
         lyrics_text = lyrics_text.replace(/[^\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFFa-zA-Z\d\s]/g," ");
         lyrics_text = lyrics_text.replace(/['’‘]/g);
         lyrics_text = lyrics_text.replace(/[・]/g,"");
-        lyrics_s.push(lyrics_text)
-    }
-    console.log(time_int)
-    console.log(display_lyrics)
-    console.log(lyrics_s)
-}
-
+        lyrics_s.push(lyrics_text);
+    };
+};
 //元の文
-
-
-
 
 function kana_lyrics(kana_lrc){
     kana_display_lyrics = [];//タイムタグだけ除いた歌詞
@@ -175,7 +195,7 @@ function kana_lyrics(kana_lrc){
             break
         }
         i = i.replace(/[\ufeff\r]/g,"");
-        let time_tags = i.match(/\[\d{2}:\d{2}\.\d{2}\]/g);
+        const time_tags = i.match(/\[\d{2}:\d{2}\.\d{2}\]/g);
         if (time_tags) { // TY チェック
             kana_is_TY = true
         }
@@ -185,11 +205,8 @@ function kana_lyrics(kana_lrc){
         }else{
             match_text = /\[\d{2}:\d{2}:\d{2}\]/g
         }
-        let lyrics_text = i.replace(match_text,"")
-        kana_display_lyrics.push(lyrics_text)
+        kana_display_lyrics.push(i.replace(match_text,""))
     }
-    console.log(kana_display_lyrics)
-    
     let kana_len_count = 0;
     kana_display_lyrics.forEach((k)=>{
         kana_len_count += k.length;
@@ -198,13 +215,11 @@ function kana_lyrics(kana_lrc){
     calc_score(kana_len_count)
 }
 
-
 function calc_score(k){
     score_char = max_score/k;
 }
 
 /*ここからスプレッドシート読み取り*/
-
 const request = new XMLHttpRequest();
 request.open('GET', 'https://script.google.com/macros/s/AKfycbwmJ81ez1wrTdjRoGPc8FbDhh5UTYp8R5N9-zGGhKpW1rEf1dDpZw9NgZwPQ9IUrwGz/exec');
     request.responseType = 'json';
@@ -216,10 +231,10 @@ request.send();
 
 
 function img_clickEvent(e){
-    let f_id = e.target.getAttribute("name")
-    lrc_set(f_id)
+    is_F4 = false;
+    lrc_set(e.target.getAttribute("name"));
+    play_id = e.target.getAttribute("name");
 }
-
 
 function add_lrc_selection(data){
 
@@ -236,17 +251,13 @@ function add_lrc_selection(data){
       
 }
 
-
 function lrc_set(id){
-    video_set(data[id]["URL"])
-    lyrics(data[id]["KASHI"])
-    kana_lyrics(data[id]["YOMI"])
+    video_set(data[id]["URL"]);
+    lyrics(data[id]["KASHI"]);
+    kana_lyrics(data[id]["YOMI"]);
+    player.seekTo(0);
 }
-
-
 /*ここまで読み取り*/
-
-
 
 function onYouTubeIframeAPIReady() {
 
@@ -264,6 +275,7 @@ function onYouTubeIframeAPIReady() {
             'onStateChange': onPlayerStateChange,
         }
     });
+
 }
 //Youtube playerAPI
 
@@ -277,7 +289,6 @@ document.getElementById('playVolume').addEventListener('input',(e)=>{
     }
 })
 
-
 function time_display(){
     currentTime = player.getCurrentTime();
     let display_time = Math.floor(currentTime*100)/100
@@ -285,31 +296,36 @@ function time_display(){
     lyrics_display()
 }
 
-function onPlayerReady(event) {
+function onPlayerReady() {
     time_interval = setInterval(time_display,5)
     player.setVolume(10)
 }
 
 function onPlayerStateChange(event) {
-
     if (event.data == YT.PlayerState.PLAYING) {
         is_play = true;
         time_interval = setInterval(time_display,5)
     } else if (event.data == YT.PlayerState.PAUSED) {
         is_play = false;
       clearInterval(time_interval)
-    } 
+    } else if(event.data == YT.PlayerState.ENDED) {
+        Result();
+      }
   }
   
 
 function lyrics_display(){
     if(currentTime <= index_pre){
         index = 0
+        roma_untyped.innerText = '';
+        kana_lyrics_text.innerText = '';
+        lyrics_text.innerText = '';
+        keygraph.build('');
     }
     if(currentTime >= time_int[index]){
         lyrics_text.innerHTML = display_lyrics[index]
         kana_lyrics_text.innerHTML = kana_display_lyrics[index]
-        hig(display_lyrics[index],kana_display_lyrics[index])
+        hig(kana_display_lyrics[index])
         index_pre = time_int[index]
         index++
         index_next = time_int[index]
@@ -321,11 +337,17 @@ function lyrics_display(){
     }
     if(index == 0 && kana_display_lyrics[0]){
         next_lyrics_text.innerHTML = "next " + kana_display_lyrics[0];
+        document.onkeydown = function(e){
+            e.preventDefault();
+            if(e.code === 'Space' && index == 0 && kana_display_lyrics[0] && time_int[0] - currentTime > 3){
+                console.log(time_int)
+                player.seekTo(time_int[0] - 3);
+            }
+        }
     }
     
     progress()
 }
-
 
 function progress(){
     if(is_play){
@@ -333,6 +355,7 @@ function progress(){
         prog = (currentTime - index_pre)/(index_next - index_pre)
         if(index == 0){
             prog = currentTime/time_int[0]
+            keygraph.reset()
         }
         
         if(index == time_int.length){
@@ -349,15 +372,13 @@ function progress(){
         let x = index_line_count - (kana_type_count + line_type_count);
         let possible = (max_score/kana_length)*(kana_length - x);
         possible_div.textContent = Math.floor(possible);
-
         let line_noco = kana_display_lyrics.length - (index+1);
         if(line_noco != -1){
             nocori_line_div.textContent = line_noco;
         }   
         score = (max_score/kana_length)*(kana_type_count + line_type_count);
-        let display_score = Math.round(score)
 
-        score_div.textContent = display_score;
+        score_div.textContent = Math.round(score);
         miss_div.textContent = miss_count;
         type_div.textContent = type_count;
         //表示系
@@ -382,9 +403,7 @@ const disp = ()=>{
     kana_lyrics_text_typed.innerText = keygraph.seq_done();
 }
 
-
-
-function hig(canji,kana){//canji消すとバグる
+function hig(kana){//canji消すとバグる
     if(line_type_count){
         kana_type_count += line_type_count;
     }
@@ -419,6 +438,9 @@ function hig(canji,kana){//canji消すとバグる
                     player.setPlaybackRate(speedList[f10count]);
                     play_speed.textContent = `${speedList[f10count]}倍速`
                     break;
+                case "F4":
+                    is_F4 = true;
+                    reset();
                 default:
               }
               //ショートカットキー対応
@@ -457,14 +479,25 @@ function hig(canji,kana){//canji消すとバグる
             while(roma_typed.textContent.length >= 16){
                 roma_typed.textContent = roma_typed.textContent.substring(1);
             }
-            if(roma_untyped.innerText == '' && index_next - currentTime > 5 && e.code=='Space'){
-                player.seekTo(index_next - 3);
-                //3秒前に飛ばす
-            }
-            if(is_last && e.code=='Space'){
-                player.seekTo(player.getDuration() - 3);
-            }
+            if(e.code == 'Space'){
+                if(roma_untyped.innerText == '' && index_next - currentTime > 5 && index){
+                    player.seekTo(index_next - 3);
+                    //3秒前に飛ばす
+                }
+                if(keygraph.is_finished()){
+                    if(!is_result && is_last && player.getDuration() - currentTime > 3){
+                        player.seekTo(player.getDuration() - 3);
+                    }else if(index_next - currentTime > 3){
+                        player.seekTo(index_next - 3);
+                    }
+                }
+
+        }
         };
     }
 }
 
+function Result(){
+    is_result = true;
+    Result_div.style.display = 'block';
+}
