@@ -134,6 +134,12 @@ body::-webkit-scrollbar{
     left: 8vw;
 }
 
+#IR_label{
+    position: relative;
+    top: 100vh;
+    height: 1em;
+}
+
 #status{
     width: 30vw;
     font-size:2em;
