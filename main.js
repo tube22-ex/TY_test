@@ -79,6 +79,7 @@ let f10count = 3;
 //カウント系
 
 let startTime = 0;
+let intervalRate = 5;
 //時間
 
 function reset(){
@@ -290,6 +291,12 @@ document.getElementById('playVolume').addEventListener('input',(e)=>{
     }
 })
 
+document.getElementById('intervalRate_input').addEventListener('input',(e)=>{
+    if(player){
+        intervalRate = e.target.value;
+    }
+})
+
 function time_display(){
     currentTime = player.getCurrentTime();
     let display_time = Math.floor(currentTime*100)/100
@@ -298,14 +305,14 @@ function time_display(){
 }
 
 function onPlayerReady() {
-    time_interval = setInterval(time_display,5)
+    time_interval = setInterval(time_display,intervalRate);
     player.setVolume(10)
 }
 
 function onPlayerStateChange(event) {
     if (event.data == YT.PlayerState.PLAYING) {
         is_play = true;
-        time_interval = setInterval(time_display,5)
+        time_interval = setInterval(time_display,intervalRate);
     } else if (event.data == YT.PlayerState.PAUSED) {
         is_play = false;
       clearInterval(time_interval)
