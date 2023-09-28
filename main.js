@@ -45,6 +45,7 @@ let is_last = false;
 let is_build_keyevent = false;
 let is_result = false;
 let is_F4 = false;
+let is_keyEvent = false;
 //フラグ系
 
 let data;
@@ -415,9 +416,11 @@ function hig(kana){//canji消すとバグる
 
     disp();
     //行初期化
-    if(!is_build_keyevent){
-    document.body.addEventListener("keydown", keyEvent)
+    if(!is_keyEvent && !is_build_keyevent){
+    document.body.addEventListener("keydown", keyEvent);
+    console.log("イベント作成")
     is_build_keyevent = true;
+    is_keyEvent = true;
     }
     function keyEvent(e) {
         e.preventDefault();
