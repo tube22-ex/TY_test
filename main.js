@@ -5,6 +5,18 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 sound.init();
 
+let app01;
+let app01DB;
+
+(function() {
+    const firebaseConfig = {
+            apiKey: "AIzaSyCZulPboPP-zrKecvC4OCK6gbTJ_5u7o_8",
+            databaseURL: "https://ty-project-58719-default-rtdb.firebaseio.com/",
+    };
+    const app01 = firebase.initializeApp(firebaseConfig);
+    app01DB = app01.database();
+})();
+
 const max_score = 200000;
 //maxスコア
 
@@ -82,6 +94,7 @@ let startTime = 0;
 let intervalRate = 5;
 //時間
 
+
 function reset(){
     // if(is_build_keyevent){
     //     document.body.removeEventListener("keydown", keyEvent)
@@ -133,6 +146,11 @@ function video_set(YT_URL){
     player.cueVideoById(YT_URL);
     reset();
 }
+
+document.getElementsByName('ranking_show_name')[0].addEventListener('change',(e)=>{
+    localStorage.setItem('name',e.target.value);
+    alert(`${e.target.value}に設定しました。`)
+})
 
 function lyrics(lrc){
     kana_time_int = [];//timetag
@@ -216,20 +234,23 @@ function kana_lyrics(kana_lrc){
     kana_length = kana_len_count;
     calc_score(kana_len_count)
 }
+//かな歌詞
 
 function calc_score(k){
     score_char = max_score/k;
 }
 
 /*ここからスプレッドシート読み取り*/
-const request = new XMLHttpRequest();
-request.open('GET', 'https://script.google.com/macros/s/AKfycbwmJ81ez1wrTdjRoGPc8FbDhh5UTYp8R5N9-zGGhKpW1rEf1dDpZw9NgZwPQ9IUrwGz/exec');
-    request.responseType = 'json';
-    request.onload = function () {
-        data = this.response;
-        add_lrc_selection(data)
-    };
-request.send();
+(function() {
+    const request = new XMLHttpRequest();
+    request.open('GET', 'https://script.google.com/macros/s/AKfycbwmJ81ez1wrTdjRoGPc8FbDhh5UTYp8R5N9-zGGhKpW1rEf1dDpZw9NgZwPQ9IUrwGz/exec');
+        request.responseType = 'json';
+        request.onload = function () {
+            data = this.response;
+            add_lrc_selection(data)
+        };
+    request.send();
+})();
 
 
 function img_clickEvent(e){
@@ -253,10 +274,40 @@ function add_lrc_selection(data){
       
 }
 
+function show_ranking(id){
+    document.getElementById('ranking').innerHTML = `<ol type="1" id="ranking_ol"></ol>`
+    app01DB.ref().child(id).once('value')
+    .then(snapshot => {
+        if (snapshot.exists()) {
+        // パスが存在する場合の処理
+        let DBdata = snapshot.val();
+        console.log(DBdata);
+        DBdataSelector(DBdata)
+        } else {
+        // パスが存在しない場合の処理
+        console.log(`DB内に${id}のデータがありません。`);
+        return
+        }
+    })
+    function DBdataSelector(dbdata){
+        let rank_Array = [];
+        for(item in dbdata){
+            dbdata[item].sort((a, b) => b.score - a.score);
+            rank_Array.push(dbdata[item][0]);
+        }
+        rank_Array.sort((a, b) => b.score - a.score);
+        rank_Array.forEach((Array)=>{
+            document.getElementById('ranking_ol').insertAdjacentHTML("beforeend",`<li>${Array["score"]}　${Array["NAME"]}</li>`);
+        })
+    }
+}
+
+
 function lrc_set(id){
     video_set(data[id]["URL"]);
     lyrics(data[id]["KASHI"]);
     kana_lyrics(data[id]["YOMI"]);
+    show_ranking(id);
     player.seekTo(0);
 }
 /*ここまで読み取り*/
@@ -411,7 +462,7 @@ const disp = ()=>{
     kana_lyrics_text_typed.innerText = keygraph.seq_done();
 }
 
-function hig(kana){//canji消すとバグる
+function hig(kana){
     if(line_type_count){
         kana_type_count += line_type_count;
     }
@@ -510,4 +561,44 @@ function hig(kana){//canji消すとバグる
 function Result(){
     is_result = true;
     Result_div.style.display = 'block';
+    app01DB.ref(play_id).once('value').then(snapshot => {
+        let name = localStorage.getItem('name')
+        let appdata = snapshot.val()
+        if(!appdata){
+            let data = {};
+            data[play_id] = {};
+            data[play_id][name] = {};
+            data[play_id][name][0] = {
+                "score": Math.floor(score),
+                "type_count": type_count,
+                "line_count": line_count,
+                "NAME": name
+            };
+            app01DB.ref().update(data);
+        }else{
+            if(appdata[name]){
+                let len = Object.keys(appdata[name]).length;
+                let data01 = {};
+                data01[len] = {
+                    "score": Math.floor(score),
+                    "type_count": type_count,
+                    "line_count": line_count,
+                    "NAME": name
+                };
+                app01DB.ref(play_id).child(name).update(data01);
+            }else{
+                let data02 = {};
+                data02[name] = {};
+                data02[name][0] = {
+                    "score": Math.floor(score),
+                    "type_count": type_count,
+                    "line_count": line_count,
+                    "NAME": name
+                };
+                app01DB.ref(play_id).update(data02);
+            }
+            //名前があるかどうか
+        }
+        //play_idがあるかどうか
+    });
 }
