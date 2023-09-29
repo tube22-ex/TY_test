@@ -39,7 +39,8 @@ const lyrics_text = document.getElementById('lyrics_text'),
      play_speed = document.getElementById('play_speed'),
      lrc_select = document.getElementById('lrc_select'),
      typing_speed = document.getElementById('typing_speed'),
-     Result_div = document.getElementById('Result_div');
+     Result_div = document.getElementById('Result_div'),
+     time = document.getElementById('time');
 //要素系
 
 const clear_color = 'green',
@@ -145,6 +146,9 @@ function reset(){
 function video_set(YT_URL){
     player.cueVideoById(YT_URL);
     reset();
+}
+if(localStorage.getItem('name')){
+    document.getElementsByName('ranking_show_name')[0].value = localStorage.getItem('name');
 }
 
 document.getElementsByName('ranking_show_name')[0].addEventListener('change',(e)=>{
@@ -348,8 +352,6 @@ function onYouTubeIframeAPIReady() {
 }
 //Youtube playerAPI
 
-const time = document.getElementById('time');
-//プレイヤー下テキスト
 
 
 document.getElementById('playVolume').addEventListener('input',(e)=>{
@@ -485,7 +487,9 @@ function hig(kana){
     line_type_count = 0;
     is_finish = false;
     kana = kana.toLowerCase();
+    console.time()
     keygraph.build(kana);
+    console.timeEnd();
     startTime = new Date().getTime()
 
     disp();
