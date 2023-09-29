@@ -134,15 +134,16 @@ body::-webkit-scrollbar{
     left: 8vw;
 }
 
-#IR_label{
+.input-label{
     position: relative;
     top: 100vh;
     height: 1em;
 }
 
 #status{
-    width: 30vw;
-    font-size:2em;
+    width: 24vw;
+    height:13.5em;
+    font-size:1.5em;
     border:solid 2px rgb(113, 113, 113);
     border-radius : 10px;
     line-height : 1.4em;
@@ -152,6 +153,32 @@ body::-webkit-scrollbar{
     position: relative;
     left: 1vw;
 }
+
+#ranking{
+    width: 20vw;
+    height:13.5em;
+    font-size:1.5em;
+    border:solid 2px rgb(113, 113, 113);
+    border-radius : 10px;
+    line-height : 1.4em;
+    overflow: scroll;
+}
+
+#ranking > ol{
+    position: relative;
+    left: 1vw;
+}
+
+li::marker {
+    content: ""; /* マーカーの内容を空にする */
+}
+
+/* スクロールバーの幅と背景色を設定 */
+#ranking::-webkit-scrollbar{
+    display:none;
+}
+  
+
 
 #Result_div{
     width: 100%;
