@@ -281,7 +281,6 @@ function show_ranking(id){
         if (snapshot.exists()) {
         // パスが存在する場合の処理
         let DBdata = snapshot.val();
-        console.log(DBdata);
         DBdataSelector(DBdata)
         } else {
         // パスが存在しない場合の処理
@@ -299,7 +298,24 @@ function show_ranking(id){
         rank_Array.forEach((Array)=>{
             document.getElementById('ranking_ol').insertAdjacentHTML("beforeend",`<li>${Array["score"]}　${Array["NAME"]}</li>`);
         })
+
+        document.querySelectorAll('#ranking_ol > li').forEach((list) => {
+            list.addEventListener('click',show_record);
+            }
+        )
+        function show_record(e){
+            let li_text = e.target.textContent;
+            let li_name = li_text.substring(li_text.indexOf("　") + 1,li_text.length);
+            let select_object = dbdata[li_name];
+            let window1 = window.open("about:blank", "window_name", "width=800,height=500,scrollbars=yes");
+            window1.document.body.insertAdjacentHTML("afterbegin",`<ol id="Record_ol"></ol>`);
+            select_object.forEach((s)=>{
+                window1.document.getElementById('Record_ol').insertAdjacentHTML("afterbegin",`<li>${s["date"]} クリアライン数: ${s["line_count"]} スコア: ${s["score"]} タイプ数: ${s["type_count"]}</li>`)
+            })
+        }
+
     }
+
 }
 
 
@@ -561,6 +577,8 @@ function hig(kana){
 function Result(){
     is_result = true;
     Result_div.style.display = 'block';
+    const now = new Date();
+    let NOW = `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()} ${now.getHours()}:${now.getMinutes()}`
     app01DB.ref(play_id).once('value').then(snapshot => {
         let name = localStorage.getItem('name')
         let appdata = snapshot.val()
@@ -572,7 +590,8 @@ function Result(){
                 "score": Math.floor(score),
                 "type_count": type_count,
                 "line_count": line_count,
-                "NAME": name
+                "NAME": name,
+                "date": NOW
             };
             app01DB.ref().update(data);
         }else{
@@ -583,7 +602,8 @@ function Result(){
                     "score": Math.floor(score),
                     "type_count": type_count,
                     "line_count": line_count,
-                    "NAME": name
+                    "NAME": name,
+                    "date": NOW
                 };
                 app01DB.ref(play_id).child(name).update(data01);
             }else{
@@ -593,7 +613,8 @@ function Result(){
                     "score": Math.floor(score),
                     "type_count": type_count,
                     "line_count": line_count,
-                    "NAME": name
+                    "NAME": name,
+                    "date": NOW
                 };
                 app01DB.ref(play_id).update(data02);
             }
