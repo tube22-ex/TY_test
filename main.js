@@ -59,6 +59,7 @@ let is_build_keyevent = false;
 let is_result = false;
 let is_F4 = false;
 let is_keyEvent = false;
+let is_input = false;
 //フラグ系
 
 let data;
@@ -157,6 +158,13 @@ document.getElementsByName('ranking_show_name')[0].addEventListener('change',(e)
     localStorage.setItem('name',e.target.value);
     alert(`${e.target.value}に設定しました。`)
 })
+
+function input_flg(){
+    is_input = true;
+}
+function input_blur(){
+    is_input = false;
+}
 
 function lyrics(lrc){
     kana_time_int = [];//timetag
@@ -448,7 +456,9 @@ function lyrics_display(){
     if(index == 0 && kana_display_lyrics[0] !== 'undefined'){
         next_lyrics_text.innerHTML = "next " + kana_display_lyrics[0];
         document.onkeydown = function(e){
+            if(!is_input){
             e.preventDefault();
+            }
             if(e.code === 'Space' && index == 0 && kana_display_lyrics[0] !== 'undefined' && time_int[0] - currentTime > 3){
                 player.seekTo(time_int[0] - 3);
             }
@@ -513,7 +523,9 @@ function hig(kana){
     is_keyEvent = true;
     }
     function keyEvent(e) {
+        if(!is_input){
         e.preventDefault();
+        }
         if(e.code in Shortcut_key){
             switch (Shortcut_key[e.code]){
                 case "Escape":
@@ -597,6 +609,9 @@ function Result(){
     let NOW = `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()} ${now.getHours()}:${now.getMinutes()}`
     app01DB.ref(play_id).once('value').then(snapshot => {
         let name = localStorage.getItem('name')
+        if(!name){
+            name = "名前未設定"
+        }
         let appdata = snapshot.val()
         if(!appdata){
             let data = {};
