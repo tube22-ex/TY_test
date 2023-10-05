@@ -421,7 +421,14 @@ function status_fuc(){
         type_div.textContent = type_count;
         //表示系
         if(!is_finish){
-        typing_speed.innerText = `${(Math.round((keygraph.key_done().length / (currentTime - time_int[index - 1])*100))/100).toFixed(2)}打/秒 - ${(Math.round((keygraph.key_done().length / (currentTime - time_int[index - 1])*100) * 60 )/100).toFixed(2)}打/分`
+            let s_type = (keygraph.key_done().length / (currentTime - time_int[index - 1])*100)
+            if(!isNaN(s_type)){
+                let sec_type = (Math.round(s_type)/100).toFixed(2);
+                let min_type = (Math.round(s_type * 60 )/100).toFixed(2);
+            typing_speed.innerText = `${sec_type}打/秒 - ${min_type}打/分`
+            }else{
+            typing_speed.innerText = `0打/秒 - 0打/分`
+            }
         }
     }
 }
@@ -454,7 +461,11 @@ function lyrics_display(){
         }
     }
     if(index == 0 && kana_display_lyrics[0] !== 'undefined'){
-        next_lyrics_text.innerHTML = "next " + kana_display_lyrics[0];
+        if(display_lyrics[index]){
+            next_lyrics_text.innerHTML = "next " + kana_display_lyrics[0];
+            }else{
+                next_lyrics_text.innerHTML = ""
+            }
         document.onkeydown = function(e){
             if(!is_input){
             e.preventDefault();
