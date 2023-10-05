@@ -64,6 +64,7 @@ let is_keyEvent = false;
 let data;
 let player;
 let time_interval;
+let slow_interval;
 //変数宣言
 
 let time_int = [];//timetag
@@ -77,6 +78,7 @@ let index_pre = 0;
 let index_next = 0;
 let currentTime = 0;
 let play_id = 0;
+let index_line_count = 0;
 //index系
 
 let score = 0;
@@ -91,8 +93,8 @@ let line_count = 0;
 let f10count = 3;
 //カウント系
 
-let startTime = 0;
 let intervalRate = 5;
+let slow_interval_Rate = 100;
 //時間
 
 
@@ -132,7 +134,6 @@ function reset(){
     index_pre = 0;
     index_next = 0;
     currentTime = 0;
-    startTime = 0;
     if(!is_F4){
     kana_length = 0;
 
@@ -142,6 +143,7 @@ function reset(){
     lyrics_s = [];//加工済み歌詞
     };
     clearInterval(time_interval);
+    clearInterval(slow_interval);
 }
 function video_set(YT_URL){
     player.cueVideoById(YT_URL);
@@ -339,9 +341,13 @@ function onYouTubeIframeAPIReady() {
         height: '360',
         videoId: '',
         playerVars: {
+            start: 0,
+            startSeconds: 0,
             controls: 0, // コントロールバーを非表示にする
             enablejsapi: 1,
             disablekb: 1,
+            rel: 0,
+            origin: location.protocol + '//' + location.hostname + "/"
         },
         events: {
             'onReady': onPlayerReady,
@@ -368,13 +374,12 @@ document.getElementById('intervalRate_input').addEventListener('input',(e)=>{
 
 function time_display(){
     currentTime = player.getCurrentTime();
-    let display_time = Math.floor(currentTime*100)/100
-    time.textContent = `${display_time.toFixed(2)} / ${player.getDuration()}`;
     lyrics_display()
 }
 
 function onPlayerReady() {
     time_interval = setInterval(time_display,intervalRate);
+    slow_interval = setInterval(slow_interval_fuc,slow_interval_Rate);
     player.setVolume(10)
 }
 
@@ -382,14 +387,43 @@ function onPlayerStateChange(event) {
     if (event.data == YT.PlayerState.PLAYING) {
         is_play = true;
         time_interval = setInterval(time_display,intervalRate);
+        slow_interval = setInterval(slow_interval_fuc,slow_interval_Rate);
     } else if (event.data == YT.PlayerState.PAUSED) {
         is_play = false;
-      clearInterval(time_interval)
+      clearInterval(time_interval);
+      clearInterval(slow_interval);
     } else if(event.data == YT.PlayerState.ENDED) {
         Result();
       }
   }
   
+function status_fuc(){
+    if(is_play){
+        let x = index_line_count - (kana_type_count + line_type_count);
+        let possible = (max_score/kana_length)*(kana_length - x);
+        possible_div.textContent = Math.floor(possible);
+        let line_noco = kana_display_lyrics.length - (index+1);
+        if(line_noco != -1){
+            nocori_line_div.textContent = line_noco;
+        }   
+        score = (max_score/kana_length)*(kana_type_count + line_type_count);
+
+        score_div.textContent = Math.round(score);
+        miss_div.textContent = miss_count;
+        type_div.textContent = type_count;
+        //表示系
+        if(!is_finish){
+        typing_speed.innerText = `${(Math.round((keygraph.key_done().length / (currentTime - time_int[index - 1])*100))/100).toFixed(2)}打/秒 - ${(Math.round((keygraph.key_done().length / (currentTime - time_int[index - 1])*100) * 60 )/100).toFixed(2)}打/分`
+        }
+    }
+}
+
+function slow_interval_fuc(){
+    let display_time = Math.floor(currentTime*100)/100
+    time.textContent = `${display_time.toFixed(0)} / ${player.getDuration()}`;
+    status_fuc();
+}
+
 
 function lyrics_display(){
     if(currentTime <= index_pre){
@@ -417,7 +451,6 @@ function lyrics_display(){
         document.onkeydown = function(e){
             e.preventDefault();
             if(e.code === 'Space' && index == 0 && kana_display_lyrics[0] && time_int[0] - currentTime > 3){
-                console.log(time_int)
                 player.seekTo(time_int[0] - 3);
             }
         }
@@ -442,25 +475,9 @@ function progress(){
         }else{
             progressBar.value = prog
         }
-        let index_line_count = 0
+        index_line_count = 0
         for(let i=0;i<index;i++){
             index_line_count += kana_display_lyrics[i].length;
-        }
-        let x = index_line_count - (kana_type_count + line_type_count);
-        let possible = (max_score/kana_length)*(kana_length - x);
-        possible_div.textContent = Math.floor(possible);
-        let line_noco = kana_display_lyrics.length - (index+1);
-        if(line_noco != -1){
-            nocori_line_div.textContent = line_noco;
-        }   
-        score = (max_score/kana_length)*(kana_type_count + line_type_count);
-
-        score_div.textContent = Math.round(score);
-        miss_div.textContent = miss_count;
-        type_div.textContent = type_count;
-        //表示系
-        if(!is_finish){
-        typing_speed.innerText = `${(Math.round((keygraph.key_done().length / (new Date().getTime() - startTime)*100000))/100).toFixed(2)}打/秒 - ${(Math.round((keygraph.key_done().length / (new Date().getTime() - startTime)*100000) * 60 )/100).toFixed(2)}打/分`
         }
     }
 }
@@ -487,16 +504,12 @@ function hig(kana){
     line_type_count = 0;
     is_finish = false;
     kana = kana.toLowerCase();
-    console.time()
     keygraph.build(kana);
-    console.timeEnd();
-    startTime = new Date().getTime()
 
     disp();
     //行初期化
     if(!is_keyEvent && !is_build_keyevent){
     document.body.addEventListener("keydown", keyEvent);
-    console.log("イベント作成")
     is_build_keyevent = true;
     is_keyEvent = true;
     }
@@ -627,3 +640,4 @@ function Result(){
         //play_idがあるかどうか
     });
 }
+//Result表示
