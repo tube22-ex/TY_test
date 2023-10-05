@@ -48,9 +48,10 @@ body{
 #playerdiv{
     display: flex;
     width:90vw;
-    top:50vh;
+    top:49vh;
     position: relative;
-    left:7vw
+    left:7vw;
+    height:13.35em;
 }
 
 body { min-height: 100vh; }
@@ -146,11 +147,17 @@ body::-webkit-scrollbar{
 
 #status{
     width: 24vw;
-    height:13.5em;
+    height:13.35em;
     font-size:1.5em;
     border:solid 2px rgb(113, 113, 113);
     border-radius : 10px;
     line-height : 1.4em;
+    overflow: scroll;
+}
+
+/* スクロールバーの幅と背景色を設定 */
+#status::-webkit-scrollbar{
+    display:none;
 }
 
 #status > span,#status > div{
@@ -160,7 +167,7 @@ body::-webkit-scrollbar{
 
 #ranking{
     width: 20vw;
-    height:13.5em;
+    height:13.35em;
     font-size:1.5em;
     border:solid 2px rgb(113, 113, 113);
     border-radius : 10px;
