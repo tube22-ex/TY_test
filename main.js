@@ -428,14 +428,13 @@ function slow_interval_fuc(){
 function lyrics_display(){
     if(currentTime <= index_pre){
         index = 0
-        roma_untyped.innerText = '';
-        kana_lyrics_text.innerText = '';
-        lyrics_text.innerText = '';
         keygraph.build('');
+        disp();
+        //行初期化
     }
     if(currentTime >= time_int[index]){
         lyrics_text.innerHTML = display_lyrics[index]
-        kana_lyrics_text.innerHTML = kana_display_lyrics[index]
+        //kana_lyrics_text.innerHTML = kana_display_lyrics[index]
         hig(kana_display_lyrics[index])
         index_pre = time_int[index]
         index++
@@ -446,11 +445,11 @@ function lyrics_display(){
             next_lyrics_text.innerHTML = ""
         }
     }
-    if(index == 0 && kana_display_lyrics[0]){
+    if(index == 0 && kana_display_lyrics[0] !== 'undefined'){
         next_lyrics_text.innerHTML = "next " + kana_display_lyrics[0];
         document.onkeydown = function(e){
             e.preventDefault();
-            if(e.code === 'Space' && index == 0 && kana_display_lyrics[0] && time_int[0] - currentTime > 3){
+            if(e.code === 'Space' && index == 0 && kana_display_lyrics[0] !== 'undefined' && time_int[0] - currentTime > 3){
                 player.seekTo(time_int[0] - 3);
             }
         }
@@ -482,7 +481,7 @@ function progress(){
     }
 }
 
-// これから打つキー、すでに打ったキーを表示、 ... は適宜変更してください。
+
 const disp = ()=>{
     // これからタイプしなければいけないキーの取得
     roma_untyped.innerText = keygraph.key_candidate();
