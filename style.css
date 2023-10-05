@@ -188,6 +188,24 @@ body::-webkit-scrollbar{
     }
 }
 
+@media screen and (max-width: 500px){
+    #status{
+        position: absolute;
+        top: 52vh;
+        height: 30vh;
+        width: 90vw;
+    }
+    #ranking{
+        position: absolute;
+        top: 83vh;
+        height: 30vh;
+        width: 90vw;
+    }
+    #playerdiv{
+        height: 25.35em;
+    }
+}
+
 #ranking > ol{
     position: relative;
     left: 1vw;
